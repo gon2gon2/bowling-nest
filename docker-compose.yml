@@ -2,7 +2,7 @@ version: "3"
 services:
   db:
     image: postgres:latest
-    container_name: postgres
+    container_name: "${DB_CONTAINER_NAME}"
     # restart: always
     ports:
       - "5432:5432"
@@ -20,6 +20,8 @@ services:
     # image: node:16.13.1
     build: ./bowling-app
     container_name: nestjs
+    env_file:
+      - ./.env
     ports:
       - "3000:3000"
     volumes:
