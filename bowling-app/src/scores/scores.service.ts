@@ -40,7 +40,7 @@ export class ScoresService {
     for (let i = 1; i < 6; i++) {
       result.push({
         userName: userTable[i],
-        userScoreList: scoreTable[i],
+        userScoreList: scoreTable[i].slice(-6),
       });
     }
     return result;
