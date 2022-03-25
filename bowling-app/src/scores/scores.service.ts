@@ -1,38 +1,80 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { validate } from 'class-validator';
+import { map } from 'rxjs';
 import { CreateScoreDto } from './dto/create-score.dto';
-import { ScoreStatus } from './score-status.enum';
+import { Score } from './score.entity';
+import { ScoreRepository } from './score.repository';
 
 @Injectable() // 어디에서도 사용할 수 있게 만들어 줌
 export class ScoresService {
-  // getAllScores(): Score[] {
-  //   return this.scores;
-  // }
-  // createScore(createScoreDto: CreateScoreDto) {
-  //   const { user_id, when, place_id } = createScoreDto;
-  //   const score: Score = {
-  //     id: String(this.scores.length + 1),
-  //     user_id,
-  //     when,
-  //     place_id,
-  //     status: ScoreStatus.UNOFFICIAL,
-  //   };
-  //   this.scores.push(score);
-  //   return score;
-  // }
-  // getScoreByUserId(user_id: string): Score {
-  //   const found = this.scores.find((score) => score.user_id === user_id);
-  //   if (!found) {
-  //     throw new NotFoundException(`어쩔 티비 없다 티비`);
-  //   }
-  //   return found;
-  // }
-  // deleteScore(id: string): void {
-  //   const found = this.getScoreByUserId(id);
-  //   this.scores.filter((score) => score.id !== found.id);
-  // }
-  // updateScoreStatus(user_id: string, status: ScoreStatus): Score {
-  //   const score = this.getScoreByUserId(user_id);
-  //   score.status = status;
-  //   return score;
-  // }
+  constructor(
+    @InjectRepository(ScoreRepository)
+    private scoreRepository: ScoreRepository,
+  ) {}
+
+  async getAllScores() {
+    const userTable = {
+      1: 'XX현',
+      2: 'XX준',
+      3: 'XX곤',
+      4: 'XX일',
+      5: 'XX석',
+    };
+    const scoreTable = {
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: [],
+    };
+
+    const all_scores = await this.scoreRepository.find();
+
+    console.log(all_scores);
+    all_scores.map((item) => {
+      scoreTable[item.user_id].push(item.value);
+    });
+
+    const result = [];
+
+    for (let i = 1; i < 6; i++) {
+      result.push({
+        userName: userTable[i],
+        userScoreList: scoreTable[i],
+      });
+    }
+    return result;
+  }
+
+  createScore(createScoreDto: CreateScoreDto): Promise<Score> {
+    return this.scoreRepository.createScore(createScoreDto);
+  }
+
+  async getScoreById(id): Promise<Score> {
+    // id: number해주니까 에러남.
+    //Type 'number' has no properties in common with type 'FindOneOptions<Score>'.
+    const found = await this.scoreRepository.findOne(id);
+
+    if (!found) {
+      throw new NotFoundException(`Can't find score id: ${id}`);
+    }
+
+    return found;
+  }
+
+  async deleteScore(id: number): Promise<void> {
+    const result = await this.scoreRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Can't find Board with id: ${id}`);
+    }
+  }
+
+  async updateScore(id: number, value: number): Promise<Score> {
+    const score = await this.getScoreById(id);
+    score.value = value;
+    await this.scoreRepository.save(score);
+
+    return score;
+  }
 }

@@ -13,4 +13,7 @@ export class Score extends BaseEntity {
 
   @Column('int')
   place_id: number;
+
+  @Column('int')
+  value: number;
 }
