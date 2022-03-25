@@ -15,7 +15,7 @@ services:
       POSTGRES_DB: "${DB_NAME}"
     volumes:
       #   - ./db/initdb.d:/docker-entrypoint-initdb.d:ro
-      - ./db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
   app:
     # image: node:16.13.1
     build: ./bowling-app
@@ -24,9 +24,8 @@ services:
       - ./.env
     ports:
       - "${APP_PORT}:3000"
-    volumes:
-      - /home/gon2gon2/git/bowling-nest/bowling-app:/bowling-app
-# networks:
-#   backend:
-# volumes:
-#   db_data:
+    # volumes:
+    #   - /home/gon2gon2/git/bowling-nest/bowling-app:/bowling-app
+
+volumes:
+  db_data:
