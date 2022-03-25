@@ -13,9 +13,9 @@ services:
       POSTGRES_USER: "${DB_USER_ID}"
       POSTGRES_PASSWORD: "${DB_USER_PASSWORD}"
       POSTGRES_DB: "${DB_NAME}"
-    # volumes:
-    #   - ./db/initdb.d:/docker-entrypoint-initdb.d:ro
-    #   - db_data:/var/lib/postgresql/data
+    volumes:
+      #   - ./db/initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./db_data:/var/lib/postgresql/data
   app:
     # image: node:16.13.1
     build: ./bowling-app
