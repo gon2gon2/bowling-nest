@@ -5,12 +5,12 @@ export class Score extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column('int')
   user_id: number;
 
-  @Column()
-  when: Date;
+  @Column({ type: 'date' })
+  when: string;
 
-  @Column()
-  house_id: number;
+  @Column('int')
+  place_id: number;
 }
