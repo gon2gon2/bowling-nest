@@ -31,7 +31,6 @@ export class ScoresService {
 
     const all_scores = await this.scoreRepository.find();
 
-    console.log(all_scores);
     all_scores.map((item) => {
       scoreTable[item.user_id].push(item.value);
     });
